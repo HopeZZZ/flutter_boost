@@ -6,9 +6,9 @@ import 'package:flutter_boost/flutter_boost.dart';
 class MediaQueryRouteWidget extends StatefulWidget {
   MediaQueryRouteWidget({this.params, this.message, this.uniqueId});
 
-  final Map params;
-  final String message;
-  final String uniqueId;
+  final Map? params;
+  final String? message;
+  final String? uniqueId;
 
   @override
   State<StatefulWidget> createState() {

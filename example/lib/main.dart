@@ -77,7 +77,7 @@ class CustomInterceptor1 extends BoostInterceptor {
       BoostInterceptorOption option, PushInterceptorHandler handler) {
     Logger.log('CustomInterceptor#onPrePush1~~~, $option');
     // Add extra arguments
-    option.arguments['CustomInterceptor1'] = "1";
+    option.arguments?['CustomInterceptor1'] = "1";
     super.onPrePush(option, handler);
   }
 
@@ -95,8 +95,8 @@ class CustomInterceptor2 extends BoostInterceptor {
       BoostInterceptorOption option, PushInterceptorHandler handler) {
     Logger.log('CustomInterceptor#onPrePush2~~~, $option');
     // Add extra arguments
-    option.arguments['CustomInterceptor2'] = "2";
-    if (!option.isFromHost && option.name == "interceptor") {
+    option.arguments?['CustomInterceptor2'] = "2";
+    if (!(option.isFromHost ?? false) && option.name == "interceptor") {
       handler.resolve(<String, dynamic>{'result': 'xxxx'});
     } else {
       handler.next(option);
@@ -149,9 +149,10 @@ class _MyAppState extends State<MyApp> {
       return PageRouteBuilder<dynamic>(
           settings: settings,
           pageBuilder: (_, __, ___) => FlutterRouteWidget(
-                params: settings.arguments,
-                uniqueId: uniqueId,
-              ));
+            params: (settings.arguments ?? {}) as Map<dynamic, dynamic>,
+            message: "",
+            uniqueId: uniqueId ?? "",
+          ));
     },
     'imagepick': (settings, uniqueId) {
       return PageRouteBuilder<dynamic>(
@@ -219,8 +220,9 @@ class _MyAppState extends State<MyApp> {
       return PageRouteBuilder<dynamic>(
         settings: settings,
         pageBuilder: (_, __, ___) => FlutterRouteWidget(
-          params: settings.arguments,
-          uniqueId: uniqueId,
+          params: (settings.arguments ?? {}) as Map<dynamic, dynamic>,
+          message: "",
+          uniqueId: uniqueId ?? "",
         ),
         // transitionsBuilder: (BuildContext context, Animation<double> animation,
         //     Animation<double> secondaryAnimation, Widget child) {
@@ -244,25 +246,25 @@ class _MyAppState extends State<MyApp> {
       return PageRouteBuilder<dynamic>(
           settings: settings,
           pageBuilder: (_, __, ___) => SimpleWidget(
-              uniqueId, settings.arguments, "This is a flutter fragment"));
+              uniqueId, settings.arguments as Map<dynamic, dynamic>?, "This is a flutter fragment"));
     },
     'tab_message': (settings, uniqueId) {
       return PageRouteBuilder<dynamic>(
           settings: settings,
           pageBuilder: (_, __, ___) => SimpleWidget(
-              uniqueId, settings.arguments, "This is a flutter fragment"));
+              uniqueId, settings.arguments as Map<dynamic, dynamic>?, "This is a flutter fragment"));
     },
     'tab_flutter1': (settings, uniqueId) {
       return PageRouteBuilder<dynamic>(
           settings: settings,
           pageBuilder: (_, __, ___) => SimpleWidget(
-              uniqueId, settings.arguments, "This is a custom FlutterView"));
+              uniqueId, settings.arguments as Map<dynamic, dynamic>?, "This is a custom FlutterView"));
     },
     'tab_flutter2': (settings, uniqueId) {
       return PageRouteBuilder<dynamic>(
           settings: settings,
           pageBuilder: (_, __, ___) => SimpleWidget(
-              uniqueId, settings.arguments, "This is a custom FlutterView"));
+              uniqueId, settings.arguments as Map<dynamic, dynamic>?, "This is a custom FlutterView"));
     },
 
     'f2f_first': (settings, uniqueId) {
@@ -308,9 +310,9 @@ class _MyAppState extends State<MyApp> {
       return PageRouteBuilder<dynamic>(
           settings: settings,
           pageBuilder: (_, __, ___) => MediaQueryRouteWidget(
-                params: settings.arguments,
-                uniqueId: uniqueId,
-              ));
+            params: settings.arguments as Map<dynamic, dynamic>?,
+            uniqueId: uniqueId,
+          ));
     },
 
     ///使用 BoostCacheWidget包裹你的页面时，可以解决push pageA->pageB->pageC 过程中，pageA，pageB 会多次 rebuild 的问题
@@ -319,7 +321,7 @@ class _MyAppState extends State<MyApp> {
           settings: settings,
           builder: (ctx) {
             return BoostCacheWidget(
-              uniqueId: uniqueId,
+              uniqueId: uniqueId ?? "",
               builder: (_) => FlutterRebuildDemo(),
             );
           });
@@ -329,7 +331,7 @@ class _MyAppState extends State<MyApp> {
           settings: settings,
           builder: (ctx) {
             return BoostCacheWidget(
-              uniqueId: uniqueId,
+              uniqueId: uniqueId ?? "",
               builder: (_) => FlutterRebuildPageA(),
             );
           });
@@ -339,15 +341,15 @@ class _MyAppState extends State<MyApp> {
           settings: settings,
           builder: (ctx) {
             return BoostCacheWidget(
-              uniqueId: uniqueId,
+              uniqueId: uniqueId ?? "",
               builder: (_) => FlutterRebuildPageB(),
             );
           });
     },
   };
 
-  Route<dynamic> routeFactory(RouteSettings settings, String uniqueId) {
-    FlutterBoostRouteFactory func = routerMap[settings.name];
+  Route<dynamic>? routeFactory(RouteSettings settings, String? uniqueId) {
+    FlutterBoostRouteFactory? func = routerMap[settings.name!];
     if (func == null) {
       return null;
     }
@@ -371,22 +373,22 @@ class _MyAppState extends State<MyApp> {
 
 class BoostNavigatorObserver extends NavigatorObserver {
   @override
-  void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
-    print('boost-didPush' + route.settings.name);
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('boost-didPush' + route.settings.name!);
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
-    print('boost-didPop' + route.settings.name);
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('boost-didPop' + route.settings.name!);
   }
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic> previousRoute) {
-    print('boost-didRemove' + route.settings.name);
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('boost-didRemove' + route.settings.name!);
   }
 
   @override
-  void didStartUserGesture(Route<dynamic> route, Route<dynamic> previousRoute) {
-    print('boost-didStartUserGesture' + route.settings.name);
+  void didStartUserGesture(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('boost-didStartUserGesture' + route.settings.name!);
   }
 }
